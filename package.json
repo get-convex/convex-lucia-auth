@@ -1,0 +1,45 @@
+{
+  "name": "@convex/convex-lucia-auth",
+  "version": "0.0.1",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    },
+    "./email": {
+      "types": "./src/email.ts",
+      "default": "./src/email.ts"
+    },
+    "./react": {
+      "types": "./src/react.tsx",
+      "import": "./esm/react.js",
+      "require": "./cjs/react.js"
+    }
+  },
+  "scripts": {
+    "build": "rm -rf cjs esm && tsc -p .tsconfig.cjs.json && tsc -p .tsconfig.esm.json && echo '{\"type\": \"commonjs\"}' > cjs/package.json"
+  },
+  "dependencies": {
+    "convex": "^1.0.2",
+    "lucia": "^2.6.0"
+  },
+  "peerDependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.4.6",
+    "@types/react-dom": "^18.2.7",
+    "@types/react": "^18.2.15",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "@vitejs/plugin-react": "^4.0.3",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.3",
+    "eslint": "^8.45.0",
+    "npm-run-all": "^4.1.5",
+    "typescript": "^5.0.2",
+    "vite": "^4.4.5"
+  }
+}
