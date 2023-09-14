@@ -68,10 +68,10 @@ export function SignUpSignIn({
   flowToggleClassName: string;
   signIn: (args: { email: string; password: string }) => Promise<SessionId>;
   signUp: (args: { email: string; password: string }) => Promise<SessionId>;
-  onError: (error: unknown) => void;
+  onError: (flow: "signIn" | "signUp", error: unknown) => void;
 }) {
   const setSessionId = useSetSessionId();
-  const [flow, setFlow] = useState("signIn");
+  const [flow, setFlow] = useState<"signIn" | "signUp">("signIn");
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -81,10 +81,10 @@ export function SignUpSignIn({
         password: (data.get("password") as string | null) ?? "",
       });
       setSessionId(sessionId);
-    } catch {
+    } catch (error) {
       // TODO: Display the error after the form,
       // because that's what most people will want to do anyway
-      onError?.(flow);
+      onError?.(flow, error);
     }
   };
   return (
