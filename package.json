@@ -2,6 +2,12 @@
   "name": "@convex/convex-lucia-auth",
   "version": "0.0.1",
   "type": "module",
+  "files": [
+    "src",
+    "cjs",
+    "esm",
+    "README.md"
+  ],
   "exports": {
     ".": {
       "types": "./src/index.ts",
@@ -15,6 +21,19 @@
       "types": "./src/react.tsx",
       "import": "./esm/react.js",
       "require": "./cjs/react.js"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "*": [
+        "./src/index.ts"
+      ],
+      "email": [
+        "./src/email.ts"
+      ],
+      "react": [
+        "./src/react.tsx"
+      ]
     }
   },
   "scripts": {

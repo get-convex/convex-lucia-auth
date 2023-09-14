@@ -62,13 +62,13 @@ export function SignUpSignIn({
   signUp,
   onError,
 }: {
-  labelClassName: string;
-  inputClassName: string;
-  buttonClassName: string;
-  flowToggleClassName: string;
+  labelClassName?: string;
+  inputClassName?: string;
+  buttonClassName?: string;
+  flowToggleClassName?: string;
   signIn: (args: { email: string; password: string }) => Promise<SessionId>;
   signUp: (args: { email: string; password: string }) => Promise<SessionId>;
-  onError: (flow: "signIn" | "signUp", error: unknown) => void;
+  onError?: (flow: "signIn" | "signUp", error: unknown) => void;
 }) {
   const setSessionId = useSetSessionId();
   const [flow, setFlow] = useState<"signIn" | "signUp">("signIn");
@@ -122,7 +122,7 @@ export function SignUpSignIn({
 }
 
 // Sign out
-export function SignOutButton({ className }: { className: string }) {
+export function SignOutButton({ className }: { className?: string }) {
   const setSessionId = useSetSessionId();
   return (
     <button className={className} onClick={() => setSessionId(null)}>
