@@ -2,7 +2,7 @@
 
 This library enables authentication built entirely on top of Convex without any third-party platform. It uses [Lucia](https://lucia-auth.com/) for the authentication logic.
 
-![Screenshot of the app](./screenshot.png)
+![Screenshot of the app](https://github.com/get-convex/convex-lucia-auth-demo/raw/main/screenshot.png)
 
 Features:
 
