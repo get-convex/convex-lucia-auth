@@ -10,7 +10,7 @@ Set up the database schema:
 // convex/schema.ts
 
 import { defineSchema } from "convex/server";
-import { authTables } from "convex-lucia-auth";
+import { authTables } from "@convex-dev/convex-lucia-auth";
 import { v } from "convex/values";
 
 export default defineSchema({
@@ -28,13 +28,13 @@ Set up global types:
 ```ts
 // convex/env.d.ts
 declare namespace Lucia {
-  type Auth = import("convex-lucia-auth").Auth;
+  type Auth = import("@convex-dev/convex-lucia-auth").Auth;
   type DatabaseUserAttributes =
-    import("convex-lucia-auth").DatabaseUserAttributes & {
+    import("@convex-dev/convex-lucia-auth").DatabaseUserAttributes & {
       email: string;
     };
   type DatabaseSessionAttributes =
-    import("convex-lucia-auth").DatabaseSessionAttributes;
+    import("@convex-dev/convex-lucia-auth").DatabaseSessionAttributes;
 }
 
 declare namespace ConvexLuciaAuth {
@@ -51,7 +51,7 @@ Implement public mutations for the three operations using `convex-lucia-auth` an
 ```ts
 // convex/users.ts or similar
 import { v } from "convex/values";
-import { queryWithAuth, mutationWithAuth } from "convex-lucia-auth";
+import { queryWithAuth, mutationWithAuth } from "@convex-dev/convex-lucia-auth";
 import {
   signInWithEmailAndPassword,
   signUpWithEmailAndPassword,
@@ -135,7 +135,7 @@ Add a query exposing whatever information about the current user your frontend n
 
 ```tsx
 // users.ts
-import { queryWithAuth } from "convex-lucia-auth";
+import { queryWithAuth } from "@convex-dev/convex-lucia-auth";
 
 export const get = queryWithAuth({
   args: {},
@@ -187,7 +187,7 @@ Every time a user signs in a session is created for them. It is a good idea to d
 import { cronJobs } from "convex/server";
 import { internal } from "./_generated/api";
 import { internalMutation } from "./_generated/server";
-import { findAndDeleteDeadUserSessions } from "convex-lucia-auth";
+import { findAndDeleteDeadUserSessions } from "@convex-dev/convex-lucia-auth";
 
 const crons = cronJobs();
 
