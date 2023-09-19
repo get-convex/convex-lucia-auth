@@ -61,7 +61,7 @@ export async function signUpWithEmailAndPassword(
       providerUserId: email,
     },
     attributes: {
-      // @ts-expect-error Consumers of email should have it in their schema
+      // @ts-ignore Consumers of email should have it in their schema
       email,
       // These will be filled out by Convex
       _id: "" as GenericId<"users">,
