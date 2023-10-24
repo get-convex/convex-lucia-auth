@@ -1,6 +1,19 @@
 {
   "name": "@convex-dev/convex-lucia-auth",
   "version": "0.0.2",
+  "description": "Convex database adapter for Lucia Auth",
+  "homepage": "https://convex.dev/",
+  "repository": "https://github.com/get-convex/convex-lucia-auth",
+  "keywords": [
+    "auth",
+    "lucia",
+    "clerk",
+    "authentication",
+    "db",
+    "database",
+    "react"
+  ],
+  "license": "Apache-2.0",
   "type": "module",
   "files": [
     "src",
