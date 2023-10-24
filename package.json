@@ -53,10 +53,10 @@
     "build": "rm -rf cjs esm && tsc -p .tsconfig.cjs.json && tsc -p .tsconfig.esm.json && echo '{\"type\": \"commonjs\"}' > cjs/package.json"
   },
   "dependencies": {
-    "convex": "^1.0.2",
     "lucia": "^2.6.0"
   },
   "peerDependencies": {
+    "convex": "^1.0.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
