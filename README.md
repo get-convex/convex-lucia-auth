@@ -23,10 +23,9 @@ Checkout [Docs](https://github.com/get-convex/convex-lucia-auth/blob/master/DOCS
 
 ## Deploying to production
 
-In your production deployment's settings page configure these variables:
+In your production deployment's settings page configure this variable:
 
 - `LUCIA_ENVIRONMENT`=`PROD`
-- `HOSTNAME`=where the app is hosted, such as `foo.github.io` or `mydomain.com`
 
 ## Note on CSRF protection
 
