@@ -227,15 +227,17 @@ function MySignUpSignIn() {
     signUp: useMutationWithAuth(api.auth.signUp),
   });
   return (
-    <form onSubmit={onSubmit}>
-      <label htmlFor="username">Email</label>
-      <MyInput name="email" id="email" />
-      <label htmlFor="password">Password</label>
-      <MyInput type="password" name="password" id="password" />
-      <MyButton
-        type="submit"
-        value={flow === "signIn" ? "Sign in" : "Sign up"}
-      />
+    <>
+      <form onSubmit={onSubmit}>
+        <label htmlFor="username">Email</label>
+        <MyInput name="email" id="email" />
+        <label htmlFor="password">Password</label>
+        <MyInput type="password" name="password" id="password" />
+        <MyButton
+          type="submit"
+          value={flow === "signIn" ? "Sign in" : "Sign up"}
+        />
+      </form>
       <MyLinkButton onClick={toggleFlow}>
         {flow === "signIn"
           ? "Don't have an account? Sign up"
@@ -246,7 +248,7 @@ function MySignUpSignIn() {
           ? "Could not sign in, did you mean to sign up?"
           : "Could not sign up, did you mean to sign in?"
         : null}
-    </form>
+    </>
   );
 }
 ```
