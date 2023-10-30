@@ -58,6 +58,7 @@ export function SignUpSignIn({
   inputClassName,
   buttonClassName,
   flowToggleClassName,
+  errorDisplayClassName,
   signIn,
   signUp,
   onError,
@@ -66,14 +67,89 @@ export function SignUpSignIn({
   inputClassName?: string;
   buttonClassName?: string;
   flowToggleClassName?: string;
+  errorDisplayClassName?: string;
+  signIn: (args: { email: string; password: string }) => Promise<SessionId>;
+  signUp: (args: { email: string; password: string }) => Promise<SessionId>;
+  onError?: (flow: "signIn" | "signUp", error: unknown) => void;
+}) {
+  const { flow, toggleFlow, onSubmit, error } = useSignUpSignIn({
+    signIn,
+    signUp,
+    onError,
+  });
+  return (
+    <form onSubmit={onSubmit}>
+      <label className={labelClassName} htmlFor="username">
+        Email
+      </label>
+      <input
+        className={inputClassName}
+        name="email"
+        id="email"
+        autoComplete="username"
+      />
+      <label className={labelClassName} htmlFor="password">
+        Password
+      </label>
+      <input
+        className={inputClassName}
+        type="password"
+        name="password"
+        id="password"
+        autoComplete={flow === "signIn" ? "current-password" : "new-password"}
+      />
+      <input
+        className={buttonClassName}
+        type="submit"
+        value={flow === "signIn" ? "Sign in" : "Sign up"}
+      />
+      <a className={flowToggleClassName} onClick={toggleFlow}>
+        {flow === "signIn"
+          ? "Don't have an account? Sign up"
+          : "Already have an account? Sign in"}
+      </a>
+      <div className={errorDisplayClassName}>
+        {error !== undefined
+          ? flow === "signIn"
+            ? "Could not sign in, did you mean to sign up?"
+            : "Could not sign up, did you mean to sign in?"
+          : null}
+      </div>
+    </form>
+  );
+}
+
+// Sign out
+export function SignOutButton({ className }: { className?: string }) {
+  return (
+    <button className={className} onClick={useSignOut()}>
+      Logout
+    </button>
+  );
+}
+
+// Hooks
+
+export function useSignUpSignIn({
+  signIn,
+  signUp,
+  onError,
+}: {
   signIn: (args: { email: string; password: string }) => Promise<SessionId>;
   signUp: (args: { email: string; password: string }) => Promise<SessionId>;
   onError?: (flow: "signIn" | "signUp", error: unknown) => void;
 }) {
   const setSessionId = useSetSessionId();
   const [flow, setFlow] = useState<"signIn" | "signUp">("signIn");
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+  const [error, setError] = useState<unknown>();
+  const toggleFlow = useCallback(() => {
+    setFlow(flow === "signIn" ? "signUp" : "signIn");
+    clearError();
+  }, [flow, setFlow]);
+  const clearError = useCallback(() => setError(undefined), [setError]);
+  const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    clearError();
     const data = new FormData(event.currentTarget);
     try {
       const sessionId = await (flow === "signIn" ? signIn : signUp)({
@@ -85,53 +161,18 @@ export function SignUpSignIn({
       // TODO: Display the error after the form,
       // because that's what most people will want to do anyway
       onError?.(flow, error);
+      setError(error);
     }
   };
-  return (
-    <form onSubmit={handleSubmit}>
-      <label className={labelClassName} htmlFor="username">
-        Email
-      </label>
-      <input className={inputClassName} name="email" id="email" />
-      <label className={labelClassName} htmlFor="password">
-        Password
-      </label>
-      <input
-        className={inputClassName}
-        type="password"
-        name="password"
-        id="password"
-      />
-      <input
-        className={buttonClassName}
-        type="submit"
-        value={flow === "signIn" ? "Sign in" : "Sign up"}
-      />
-      <a
-        className={flowToggleClassName}
-        onClick={() => {
-          setFlow(flow === "signIn" ? "signUp" : "signIn");
-        }}
-      >
-        {flow === "signIn"
-          ? "Don't have an account? Sign up"
-          : "Already have an account? Sign in"}
-      </a>
-    </form>
-  );
+  return { onSubmit, flow, setFlow, toggleFlow, error, setError, clearError };
 }
 
-// Sign out
-export function SignOutButton({ className }: { className?: string }) {
+export function useSignOut() {
   const setSessionId = useSetSessionId();
-  return (
-    <button className={className} onClick={() => setSessionId(null)}>
-      Logout
-    </button>
-  );
+  return useCallback(() => setSessionId(null), [setSessionId]);
 }
 
-// Hooks
+// Convex Hooks
 
 export function useQueryWithAuth<
   Args extends { sessionId: string | null },

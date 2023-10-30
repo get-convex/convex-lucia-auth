@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.useMutationWithAuth = exports.useQueryWithAuth = exports.SignOutButton = exports.SignUpSignIn = exports.setSavedSessionId = exports.SessionProvider = exports.useSetSessionId = exports.useSessionId = void 0;
+exports.useMutationWithAuth = exports.useQueryWithAuth = exports.useSignOut = exports.useSignUpSignIn = exports.SignOutButton = exports.SignUpSignIn = exports.setSavedSessionId = exports.SessionProvider = exports.useSetSessionId = exports.useSessionId = void 0;
 const jsx_runtime_1 = require("react/jsx-runtime");
 const react_1 = require("convex/react");
 const react_2 = require("react");
@@ -44,12 +44,40 @@ function setSavedSessionId(sessionId) {
 }
 exports.setSavedSessionId = setSavedSessionId;
 // Sign in / sign up
-function SignUpSignIn({ labelClassName, inputClassName, buttonClassName, flowToggleClassName, signIn, signUp, onError, }) {
+function SignUpSignIn({ labelClassName, inputClassName, buttonClassName, flowToggleClassName, errorDisplayClassName, signIn, signUp, onError, }) {
+    const { flow, toggleFlow, onSubmit, error } = useSignUpSignIn({
+        signIn,
+        signUp,
+        onError,
+    });
+    return ((0, jsx_runtime_1.jsxs)("form", { onSubmit: onSubmit, children: [(0, jsx_runtime_1.jsx)("label", { className: labelClassName, htmlFor: "username", children: "Email" }), (0, jsx_runtime_1.jsx)("input", { className: inputClassName, name: "email", id: "email", autoComplete: "username" }), (0, jsx_runtime_1.jsx)("label", { className: labelClassName, htmlFor: "password", children: "Password" }), (0, jsx_runtime_1.jsx)("input", { className: inputClassName, type: "password", name: "password", id: "password", autoComplete: flow === "signIn" ? "current-password" : "new-password" }), (0, jsx_runtime_1.jsx)("input", { className: buttonClassName, type: "submit", value: flow === "signIn" ? "Sign in" : "Sign up" }), (0, jsx_runtime_1.jsx)("a", { className: flowToggleClassName, onClick: toggleFlow, children: flow === "signIn"
+                    ? "Don't have an account? Sign up"
+                    : "Already have an account? Sign in" }), (0, jsx_runtime_1.jsx)("div", { className: errorDisplayClassName, children: error !== undefined
+                    ? flow === "signIn"
+                        ? "Could not sign in, did you mean to sign up?"
+                        : "Could not sign up, did you mean to sign in?"
+                    : null })] }));
+}
+exports.SignUpSignIn = SignUpSignIn;
+// Sign out
+function SignOutButton({ className }) {
+    return ((0, jsx_runtime_1.jsx)("button", { className: className, onClick: useSignOut(), children: "Logout" }));
+}
+exports.SignOutButton = SignOutButton;
+// Hooks
+function useSignUpSignIn({ signIn, signUp, onError, }) {
     const setSessionId = useSetSessionId();
     const [flow, setFlow] = (0, react_2.useState)("signIn");
-    const handleSubmit = (event) => __awaiter(this, void 0, void 0, function* () {
+    const [error, setError] = (0, react_2.useState)();
+    const toggleFlow = (0, react_2.useCallback)(() => {
+        setFlow(flow === "signIn" ? "signUp" : "signIn");
+        clearError();
+    }, [flow, setFlow]);
+    const clearError = (0, react_2.useCallback)(() => setError(undefined), [setError]);
+    const onSubmit = (event) => __awaiter(this, void 0, void 0, function* () {
         var _a, _b;
         event.preventDefault();
+        clearError();
         const data = new FormData(event.currentTarget);
         try {
             const sessionId = yield (flow === "signIn" ? signIn : signUp)({
@@ -62,22 +90,18 @@ function SignUpSignIn({ labelClassName, inputClassName, buttonClassName, flowTog
             // TODO: Display the error after the form,
             // because that's what most people will want to do anyway
             onError === null || onError === void 0 ? void 0 : onError(flow, error);
+            setError(error);
         }
     });
-    return ((0, jsx_runtime_1.jsxs)("form", { onSubmit: handleSubmit, children: [(0, jsx_runtime_1.jsx)("label", { className: labelClassName, htmlFor: "username", children: "Email" }), (0, jsx_runtime_1.jsx)("input", { className: inputClassName, name: "email", id: "email" }), (0, jsx_runtime_1.jsx)("label", { className: labelClassName, htmlFor: "password", children: "Password" }), (0, jsx_runtime_1.jsx)("input", { className: inputClassName, type: "password", name: "password", id: "password" }), (0, jsx_runtime_1.jsx)("input", { className: buttonClassName, type: "submit", value: flow === "signIn" ? "Sign in" : "Sign up" }), (0, jsx_runtime_1.jsx)("a", { className: flowToggleClassName, onClick: () => {
-                    setFlow(flow === "signIn" ? "signUp" : "signIn");
-                }, children: flow === "signIn"
-                    ? "Don't have an account? Sign up"
-                    : "Already have an account? Sign in" })] }));
+    return { onSubmit, flow, setFlow, toggleFlow, error, setError, clearError };
 }
-exports.SignUpSignIn = SignUpSignIn;
-// Sign out
-function SignOutButton({ className }) {
+exports.useSignUpSignIn = useSignUpSignIn;
+function useSignOut() {
     const setSessionId = useSetSessionId();
-    return ((0, jsx_runtime_1.jsx)("button", { className: className, onClick: () => setSessionId(null), children: "Logout" }));
+    return (0, react_2.useCallback)(() => setSessionId(null), [setSessionId]);
 }
-exports.SignOutButton = SignOutButton;
-// Hooks
+exports.useSignOut = useSignOut;
+// Convex Hooks
 function useQueryWithAuth(query, args) {
     const sessionId = useSessionId();
     return (0, react_1.useQuery)(query, Object.assign(Object.assign({}, args), { sessionId }));
