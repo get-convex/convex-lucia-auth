@@ -68,8 +68,6 @@ export function useSignUpSignIn({ signIn, signUp, onError, }) {
             setSessionId(sessionId);
         }
         catch (error) {
-            // TODO: Display the error after the form,
-            // because that's what most people will want to do anyway
             onError?.(flow, error);
             setError(error);
         }
