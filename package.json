@@ -1,6 +1,6 @@
 {
   "name": "@convex-dev/convex-lucia-auth",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Convex database adapter for Lucia Auth",
   "homepage": "https://convex.dev/",
   "repository": "https://github.com/get-convex/convex-lucia-auth",
