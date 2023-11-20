@@ -55,7 +55,7 @@ import { queryWithAuth, mutationWithAuth } from "@convex-dev/convex-lucia-auth";
 import {
   signInWithEmailAndPassword,
   signUpWithEmailAndPassword,
-} from "convex-lucia-auth/email";
+} from "@convex-dev/convex-lucia-auth/email";
 
 export const signIn = mutationWithAuth({
   args: {
