@@ -4,11 +4,11 @@
 
 You can skip this step if you're not using TypeScript.
 
-Set up the database schema:
+### Set up the database schema
+
+In `convex/schema.ts`:
 
 ```ts
-// convex/schema.ts
-
 import { defineSchema } from "convex/server";
 import { authTables } from "@convex-dev/convex-lucia-auth";
 import { v } from "convex/values";
@@ -23,10 +23,11 @@ export default defineSchema({
 });
 ```
 
-Set up global types:
+### Set up global types
+
+In `convex/env.d.ts`:
 
 ```ts
-// convex/env.d.ts
 declare namespace Lucia {
   type Auth = import("@convex-dev/convex-lucia-auth").Auth;
   type DatabaseUserAttributes =
@@ -46,10 +47,12 @@ declare namespace ConvexLuciaAuth {
 
 ### Backend
 
-Implement public mutations for the three operations using `convex-lucia-auth` and `convex-lucia-auth/email`, which return a `SessionId`:
+Implement public mutations for the three operations using `convex-lucia-auth`
+and `convex-lucia-auth/email`, which return a `SessionId`.
+
+In `convex/users.ts` or similar:
 
 ```ts
-// convex/users.ts or similar
 import { v } from "convex/values";
 import { queryWithAuth, mutationWithAuth } from "@convex-dev/convex-lucia-auth";
 import {
@@ -82,16 +85,16 @@ export const signUp = mutationWithAuth({
 
 ### Frontend
 
-Wrap your app in `SessionProvider` from `convex-lucia-auth/react`:
+Wrap your app in `SessionProvider` from `convex-lucia-auth/react`.
+
+In `main.tsx` or similar:
 
 ```tsx
-// main.tsx or similar
 import { ConvexProvider, ConvexReactClient } from "convex/react";
 import React from "react";
 import ReactDOM from "react-dom/client";
-import App from "./App";
 import { SessionProvider } from "@convex-dev/convex-lucia-auth/react";
-import "./index.css";
+import App from "./App";
 
 const convex = new ConvexReactClient(import.meta.env.VITE_CONVEX_URL as string);
 
@@ -106,22 +109,26 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
 );
 ```
 
-In your app use the `SignInSignUp` component from `convex-lucia-auth/react`:
+In your app use the `SignInSignUp` component from `convex-lucia-auth/react`.
+
+In `AuthForm.tsx` or similar:
 
 ```tsx
-// AuthForm.tsx or similar
-import { useMutation } from "./usingSession";
+import {
+  SignUpSignIn,
+  useMutationWithAuth,
+} from "@convex-dev/convex-lucia-auth/react";
+// This path is relative so you might need to update it:
 import { api } from "../convex/_generated/api";
-import { SignUpSignIn } from "@convex-dev/convex-lucia-auth/react";
 
 export function AuthForm() {
-  const signIn = useMutation(api.users.signIn);
-  const signUp = useMutation(api.users.signUp);
+  const signIn = useMutationWithAuth(api.users.signIn);
+  const signUp = useMutationWithAuth(api.users.signUp);
   return <SignUpSignIn signIn={signIn} signUp={signUp} />;
 }
 ```
 
-And the `SignOutButton` component:
+Similarly you can use the `SignOutButton` component.
 
 ```tsx
 import { SignOutButton } from "@convex-dev/convex-lucia-auth/react";
@@ -131,10 +138,12 @@ import { SignOutButton } from "@convex-dev/convex-lucia-auth/react";
 
 ### Backend
 
-Add a query exposing whatever information about the current user your frontend needs. In this example we expose the whole user document, from `ctx.session`:
+Add a query exposing whatever information about the current user your frontend
+needs. In this example we expose the whole user document, from `ctx.session`.
+
+In `convex/users.ts` or similar:
 
 ```tsx
-// users.ts
 import { queryWithAuth } from "@convex-dev/convex-lucia-auth";
 
 export const get = queryWithAuth({
@@ -147,27 +156,24 @@ export const get = queryWithAuth({
 
 ### Frontend
 
-Leverage the query, possibly rendering the `SignUpSignIn` component when the user isn't logged in:
+Leverage the query, possibly rendering the `SignUpSignIn` component when the
+user isn't logged in.
+
+In `src/App.tsx` or similar:
 
 ```tsx
-// src/App.tsx or similar
-import {
-  SignOutButton,
-  SignUpSignIn,
-  useMutationWithAuth,
-  useQueryWithAuth,
-} from "@convex-dev/convex-lucia-auth/react";
+import { useQueryWithAuth } from "@convex-dev/convex-lucia-auth/react";
+// This path is relative so you might need to update it:
 import { api } from "../convex/_generated/api";
+import { AuthForm } from "./AuthForm";
 
 export function App() {
   const user = useQueryWithAuth(api.users.get, {});
-  const signUp = useMutationWithAuth(api.users.signUp);
-  const signIn = useMutationWithAuth(api.users.signIn);
 
   return user === undefined ? (
     <>Loading...</>
   ) : user === null ? (
-    <SignUpSignIn signIn={signIn} signUp={signUp} />
+    <AuthForm />
   ) : (
     <>
       <>Signed in with email: {user.email}</>
@@ -179,11 +185,13 @@ export function App() {
 
 ## Clearing old dead sessions
 
-Every time a user signs in a session is created for them. It is a good idea to delete old sessions so that they don't accummulate indefinitely, using `findAndDeleteDeadUserSessions` from `convex-lucia-auth`:
+Every time a user signs in a session is created for them. It is a good idea to
+delete old sessions so that they don't accummulate indefinitely, using
+`findAndDeleteDeadUserSessions` from `convex-lucia-auth`.
+
+In `convex/crons.ts`:
 
 ```ts
-// convex/crons.ts
-
 import { cronJobs } from "convex/server";
 import { internal } from "./_generated/api";
 import { internalMutation } from "./_generated/server";
@@ -215,13 +223,14 @@ To customize the UX appearance, you can either:
 
 For the second approach, follow these recipes:
 
-#### Custom SignUpSignIn
+#### Using custom components for sign up and sign in
+
+In `src/CustomAuthForm.tsx` or similar:
 
 ```tsx
-// src/App.tsx or similar
 import { useSignUpSignIn } from "@convex-dev/convex-lucia-auth/react";
 
-function MySignUpSignIn() {
+export function CustomAuthForm() {
   const { flow, toggleFlow, error, onSubmit } = useSignUpSignIn({
     signIn: useMutationWithAuth(api.auth.signIn),
     signUp: useMutationWithAuth(api.auth.signUp),
@@ -255,11 +264,12 @@ function MySignUpSignIn() {
 
 #### Custom SignOutButton
 
+In `src/CustomSignOutButton.tsx` or similar:
+
 ```tsx
-// src/App.tsx or similar
 import { useSignOut } from "@convex-dev/convex-lucia-auth/react";
 
-function MySignOutButton() {
+export function CustomSignOutButton() {
   return <MyButton onClick={useSignOut()}>Logout</MyButton>;
 }
 ```
