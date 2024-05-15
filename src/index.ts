@@ -1,10 +1,10 @@
 import {
   DataModelFromSchemaDefinition,
-  DatabaseReader,
-  DatabaseWriter,
+  GenericDatabaseReader as DatabaseReader,
+  GenericDatabaseWriter as DatabaseWriter,
   DocumentByName,
-  MutationCtx,
-  QueryCtx,
+  GenericMutationCtx as MutationCtx,
+  GenericQueryCtx as QueryCtx,
   defineSchema,
   defineTable,
   internalMutationGeneric as internalMutation,
@@ -27,7 +27,7 @@ export type DatabaseSessionAttributes = Omit<
 
 export function queryWithAuth<
   ArgsValidator extends PropertyValidators,
-  Output
+  Output,
 >({
   args,
   handler,
@@ -54,7 +54,7 @@ export function queryWithAuth<
 
 export function internalQueryWithAuth<
   ArgsValidator extends PropertyValidators,
-  Output
+  Output,
 >({
   args,
   handler,
@@ -78,7 +78,7 @@ export function internalQueryWithAuth<
 
 export function mutationWithAuth<
   ArgsValidator extends PropertyValidators,
-  Output
+  Output,
 >({
   args,
   handler,
@@ -104,7 +104,7 @@ export function mutationWithAuth<
 
 export function internalMutationWithAuth<
   ArgsValidator extends PropertyValidators,
-  Output
+  Output,
 >({
   args,
   handler,
@@ -191,7 +191,7 @@ export type MinimalDataModel = DataModelFromSchemaDefinition<
 
 export function authTables<
   UserFields extends Record<string, Validator<any, any, any>>,
-  SchemaFields extends Record<string, Validator<any, any, any>>
+  SchemaFields extends Record<string, Validator<any, any, any>>,
 >({ user, session }: { user: UserFields; session: SchemaFields }) {
   return {
     users: defineTable({
