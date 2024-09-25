@@ -1,3 +1,6 @@
+# DEPRECATED
+This library uses Lucia 2.x, which has since been deprecated. We recommend using [Convex Auth](https://docs.convex.dev/auth/convex-auth) for self-hosting auth on Convex or [Clerk](https://docs.convex.dev/auth/clerk) if you prefer a fully managed authentication service.
+
 # Convex Database Adapter + UI for Lucia Auth Library
 
 This library enables authentication built entirely on top of Convex without any third-party platform. It uses [Lucia](https://lucia-auth.com/) for the authentication logic.
